@@ -24,19 +24,19 @@ interface CategoryMiniCardProps {
 const CATEGORY_META: CategoryMiniCardProps[] = [
   {
     category: "vibe",
-    label: "Вайбовость",
+    label: "Вайбовости",
     icon: <Sparkle className="h-5 w-5" />,
     colorClass: "from-violet-500/10 to-transparent",
   },
   {
     category: "easy",
-    label: "Халявность",
+    label: "Халявности",
     icon: <Coffee className="h-5 w-5" />,
     colorClass: "from-amber-500/10 to-transparent",
   },
   {
     category: "quality",
-    label: "Качество",
+    label: "Качеству",
     icon: <GraduationCap className="h-5 w-5" />,
     colorClass: "from-emerald-500/10 to-transparent",
   },
