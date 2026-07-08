@@ -54,6 +54,7 @@ export function LoginPage() {
                 placeholder="Как вас зовут?"
                 autoComplete="name"
                 autoFocus
+                className="text-base"
               />
             </div>
             <Button
