@@ -1,13 +1,19 @@
 import {useParams} from "react-router-dom"
 import {RatingForm} from "@/components/rating/RatingForm"
 import {useTeacher, useTeacherAssignments} from "@/hooks/useTeachers"
+import {useMyRatings} from "@/hooks/useRatings"
+import {useAuthContext} from "@/hooks/useAuthContext"
 import {Skeleton} from "@/components/ui/skeleton"
 
 export function RatePage() {
     const {id} = useParams()
     const teacherId = Number(id)
+    const {person} = useAuthContext()
     const {data: teacher, isLoading} = useTeacher(teacherId)
     const {data: assignments, isLoading: assignmentsLoading} = useTeacherAssignments(teacherId)
+    const {data: myRatings} = useMyRatings(person?.id)
+
+    const existingRating = myRatings?.find((r) => r.teacher.id === teacherId)
 
     if (isLoading || !teacher) {
         return (
@@ -26,7 +32,7 @@ export function RatePage() {
                     {teacher.full_name}
                 </h1>
             </div>
-            <RatingForm teacher={teacher} assignments={assignments} isLoadingAssignments={assignmentsLoading}/>
+            <RatingForm teacher={teacher} assignments={assignments} isLoadingAssignments={assignmentsLoading} existingRating={existingRating}/>
         </div>
     )
 }

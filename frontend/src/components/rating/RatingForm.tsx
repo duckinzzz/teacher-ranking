@@ -12,22 +12,23 @@ import { ScoreInput } from "./ScoreInput"
 import { skipTeacher } from "@/api/teachers"
 import { useCreateRating } from "@/hooks/useRatings"
 import { teacherKeys } from "@/hooks/useTeachers"
-import type { Teacher, TeacherAssignment } from "@/api/types"
+import type { Rating, Teacher, TeacherAssignment } from "@/api/types"
 
 interface RatingFormProps {
   teacher: Teacher
   assignments?: TeacherAssignment[]
   isLoadingAssignments?: boolean
+  existingRating?: Rating
 }
 
-export function RatingForm({ teacher, assignments, isLoadingAssignments }: RatingFormProps) {
+export function RatingForm({ teacher, assignments, isLoadingAssignments, existingRating }: RatingFormProps) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const createRating = useCreateRating()
-  const [vibeScore, setVibeScore] = useState(5)
-  const [easyScore, setEasyScore] = useState(5)
-  const [qualityScore, setQualityScore] = useState(5)
-  const [comment, setComment] = useState("")
+  const [vibeScore, setVibeScore] = useState(existingRating?.vibe_score ?? 5)
+  const [easyScore, setEasyScore] = useState(existingRating?.easy_score ?? 5)
+  const [qualityScore, setQualityScore] = useState(existingRating?.quality_score ?? 5)
+  const [comment, setComment] = useState(existingRating?.comment ?? "")
 
   async function saveRating() {
     await createRating.mutateAsync({

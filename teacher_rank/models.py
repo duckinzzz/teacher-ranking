@@ -56,8 +56,8 @@ class TeacherAssignment(models.Model):
     )
 
     class Meta:
-        verbose_name = "Назначение преподавателя"
-        verbose_name_plural = "Назначения преподавателей"
+        verbose_name = "Предмет преподавателя"
+        verbose_name_plural = "Предметы преподавателей"
         ordering = ["course__number", "subject__name"]
         unique_together = [("teacher", "subject", "course")]
 

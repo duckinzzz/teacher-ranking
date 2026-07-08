@@ -84,7 +84,7 @@ class Command(BaseCommand):
                     skipped_count += 1
 
             summary = (
-                f"Загружено: {created_count} назначений, "
+                f"Загружено: {created_count} предметов, "
                 f"пропущено (уже есть): {skipped_count}"
             )
             if error_count:
