@@ -56,7 +56,7 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
       await saveRating()
       queryClient.removeQueries({ queryKey: teacherKeys.nextUnrated() })
       toast.success("Оценка сохранена")
-      navigate("/next")
+      navigate("/next", { replace: true })
     } catch (err) {
       const message = err instanceof Error ? err.message : "Не удалось сохранить оценку"
       toast.error(message)
@@ -68,7 +68,7 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
       await skipTeacher(teacher.id)
       queryClient.removeQueries({ queryKey: teacherKeys.nextUnrated() })
       toast.success("Пропущено")
-      navigate("/next")
+      navigate("/next", { replace: true })
     } catch (err) {
       const message = err instanceof Error ? err.message : "Не удалось пропустить"
       toast.error(message)

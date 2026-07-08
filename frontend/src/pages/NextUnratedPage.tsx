@@ -7,10 +7,10 @@ import { toast } from "sonner"
 
 export function NextUnratedPage() {
   const navigate = useNavigate()
-  const { data, isLoading, error } = useNextUnratedTeacher()
+  const { data, isLoading, isFetching, error } = useNextUnratedTeacher()
 
   useEffect(() => {
-    if (isLoading) return
+    if (isLoading || isFetching) return
     if (error) {
       toast.error("Не удалось загрузить следующего преподавателя")
       navigate("/teachers")
@@ -22,7 +22,7 @@ export function NextUnratedPage() {
       return
     }
     navigate(`/teachers/${data.teacher.id}/rate`, { replace: true })
-  }, [data, isLoading, error, navigate])
+  }, [data, isLoading, isFetching, error, navigate])
 
   return (
     <div className="flex min-h-[60dvh] flex-col items-center justify-center gap-4 text-center">

@@ -72,5 +72,7 @@ export function useNextUnratedTeacher() {
   return useQuery({
     queryKey: teacherKeys.nextUnrated(),
     queryFn: getNextUnratedTeacher,
+    staleTime: 0,
+    gcTime: 0,
   })
 }
