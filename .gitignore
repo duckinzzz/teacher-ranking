@@ -1,0 +1,31 @@
+# Environment
+.env
+PROD.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Database
+*.sqlite3
+
+# Static / media
+/static/
+/media/
+
+# IDE
+.idea/
+.vscode/
+
+# Backups
+backup.json
+
+# OS
+.DS_Store
+Thumbs.db
+cookies.txt
