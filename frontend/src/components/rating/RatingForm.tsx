@@ -6,17 +6,21 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
+import { Badge } from "@/components/ui/badge"
+import { Skeleton } from "@/components/ui/skeleton"
 import { ScoreInput } from "./ScoreInput"
 import { skipTeacher } from "@/api/teachers"
 import { useCreateRating } from "@/hooks/useRatings"
 import { teacherKeys } from "@/hooks/useTeachers"
-import type { Teacher } from "@/api/types"
+import type { Teacher, TeacherAssignment } from "@/api/types"
 
 interface RatingFormProps {
   teacher: Teacher
+  assignments?: TeacherAssignment[]
+  isLoadingAssignments?: boolean
 }
 
-export function RatingForm({ teacher }: RatingFormProps) {
+export function RatingForm({ teacher, assignments, isLoadingAssignments }: RatingFormProps) {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
   const createRating = useCreateRating()
@@ -70,8 +74,42 @@ export function RatingForm({ teacher }: RatingFormProps) {
     }
   }
 
+  const assignmentsByCourse =
+    assignments?.reduce(
+      (acc, assignment) => {
+        const courseNum = assignment.course.number
+        if (!acc[courseNum]) acc[courseNum] = []
+        acc[courseNum].push(assignment.subject.name)
+        return acc
+      },
+      {} as Record<number, string[]>
+    ) ?? {}
+
   return (
     <form onSubmit={(e) => { e.preventDefault(); handleSave() }} className="space-y-8">
+      {isLoadingAssignments ? (
+        <Skeleton className="h-12 w-full" />
+      ) : Object.keys(assignmentsByCourse).length > 0 ? (
+        <div className="space-y-2">
+          {Object.entries(assignmentsByCourse)
+            .sort(([a], [b]) => Number(a) - Number(b))
+            .map(([course, subjects]) => (
+              <div key={course} className="flex items-baseline gap-2 text-sm">
+                <span className="font-medium text-muted-foreground shrink-0">
+                  {course} курс:
+                </span>
+                <div className="flex flex-wrap gap-1">
+                  {Array.from(new Set(subjects)).map((subject) => (
+                    <Badge key={subject} variant="secondary">
+                      {subject}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ))}
+        </div>
+      ) : null}
+
       <div className="space-y-6">
         <ScoreInput
           label="Вайбовость"

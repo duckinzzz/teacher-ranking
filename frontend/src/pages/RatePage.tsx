@@ -1,12 +1,13 @@
 import {useParams} from "react-router-dom"
 import {RatingForm} from "@/components/rating/RatingForm"
-import {useTeacher} from "@/hooks/useTeachers"
+import {useTeacher, useTeacherAssignments} from "@/hooks/useTeachers"
 import {Skeleton} from "@/components/ui/skeleton"
 
 export function RatePage() {
     const {id} = useParams()
     const teacherId = Number(id)
     const {data: teacher, isLoading} = useTeacher(teacherId)
+    const {data: assignments, isLoading: assignmentsLoading} = useTeacherAssignments(teacherId)
 
     if (isLoading || !teacher) {
         return (
@@ -25,7 +26,7 @@ export function RatePage() {
                     {teacher.full_name}
                 </h1>
             </div>
-            <RatingForm teacher={teacher}/>
+            <RatingForm teacher={teacher} assignments={assignments} isLoadingAssignments={assignmentsLoading}/>
         </div>
     )
 }
