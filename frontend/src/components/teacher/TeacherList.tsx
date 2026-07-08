@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { TeacherCard } from "./TeacherCard"
 import { Skeleton } from "@/components/ui/skeleton"
-import type { TeacherWithAssignments } from "@/api/types"
+import type { Rating, TeacherWithAssignments } from "@/api/types"
 
 interface TeacherListProps {
   teachers?: TeacherWithAssignments[]
@@ -9,6 +9,7 @@ interface TeacherListProps {
   search: string
   selectedCourse: string
   selectedSubject: string
+  ratingsByTeacher: Record<number, Rating>
 }
 
 export function TeacherList({
@@ -17,6 +18,7 @@ export function TeacherList({
   search,
   selectedCourse,
   selectedSubject,
+  ratingsByTeacher,
 }: TeacherListProps) {
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase()
@@ -65,7 +67,7 @@ export function TeacherList({
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {filtered.map((teacher) => (
-        <TeacherCard key={teacher.id} teacher={teacher} />
+        <TeacherCard key={teacher.id} teacher={teacher} myRating={ratingsByTeacher[teacher.id]} />
       ))}
     </div>
   )

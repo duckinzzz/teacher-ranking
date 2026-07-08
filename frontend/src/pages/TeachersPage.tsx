@@ -4,11 +4,16 @@ import { TeacherFilters } from "@/components/teacher/TeacherFilters"
 import { TeacherList } from "@/components/teacher/TeacherList"
 import { useCourses, useSubjects } from "@/hooks/useReferences"
 import { useTeachersWithAssignments } from "@/hooks/useTeachers"
+import { useMyRatings } from "@/hooks/useRatings"
+import { useAuthContext } from "@/hooks/useAuthContext"
+import type { Rating } from "@/api/types"
 
 export function TeachersPage() {
   const [search, setSearch] = useState("")
   const [selectedCourse, setSelectedCourse] = useState("all")
   const [selectedSubject, setSelectedSubject] = useState("all")
+
+  const { person } = useAuthContext()
 
   const {
     data: teachers,
@@ -17,6 +22,14 @@ export function TeachersPage() {
   } = useTeachersWithAssignments()
   const { data: courses, isLoading: isLoadingCourses } = useCourses()
   const { data: subjects, isLoading: isLoadingSubjects } = useSubjects()
+  const { data: myRatings } = useMyRatings(person?.id)
+
+  const ratingsByTeacher: Record<number, Rating> = {}
+  if (myRatings) {
+    for (const r of myRatings) {
+      ratingsByTeacher[r.teacher.id] = r
+    }
+  }
 
   if (teachersError) {
     return (
@@ -62,6 +75,7 @@ export function TeachersPage() {
         search={search}
         selectedCourse={selectedCourse}
         selectedSubject={selectedSubject}
+        ratingsByTeacher={ratingsByTeacher}
       />
     </div>
   )
