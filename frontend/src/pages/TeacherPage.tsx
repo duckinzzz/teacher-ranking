@@ -6,6 +6,7 @@ import {
   useTeacherAssignments,
   useTeacherRanking,
 } from "@/hooks/useTeachers"
+import { useTeacherRatings } from "@/hooks/useRatings"
 
 export function TeacherPage() {
   const { id } = useParams()
@@ -17,6 +18,8 @@ export function TeacherPage() {
     useTeacherAssignments(teacherId)
   const { data: ranking, isLoading: isLoadingRanking } =
     useTeacherRanking(teacherId)
+  const { data: ratings, isLoading: isLoadingRatings } =
+    useTeacherRatings(teacherId)
 
   const teacherWithAssignments = teacher
     ? { ...teacher, assignments: assignments ?? [] }
@@ -26,8 +29,9 @@ export function TeacherPage() {
     <TeacherDetail
       teacher={teacherWithAssignments}
       ranking={ranking}
+      ratings={ratings}
       isLoading={
-        isLoadingTeacher || isLoadingAssignments || isLoadingRanking
+        isLoadingTeacher || isLoadingAssignments || isLoadingRanking || isLoadingRatings
       }
       isAuthenticated={isAuthenticated}
     />
