@@ -75,11 +75,6 @@ export function TeacherDetail({
           <h1 className="text-3xl font-semibold tracking-tight">
             {teacher.full_name}
           </h1>
-          <p className="mt-1 text-muted-foreground">
-            {teacher.assignments.length > 0
-              ? "Преподаватель по направлениям"
-              : "Нет предметов"}
-          </p>
         </div>
         {isAuthenticated && (
           <Button asChild>
