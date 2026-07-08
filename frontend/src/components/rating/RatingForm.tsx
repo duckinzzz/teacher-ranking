@@ -166,7 +166,13 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
         <Button
           type="button"
           variant="ghost"
-          onClick={() => navigate(-1)}
+          onClick={() => {
+            if (window.history.length > 1) {
+              navigate(-1)
+            } else {
+              navigate(`/teachers/${teacher.id}`)
+            }
+          }}
           disabled={createRating.isPending}
         >
           Отмена

@@ -21,7 +21,7 @@ export function NextUnratedPage() {
       navigate("/teachers")
       return
     }
-    navigate(`/teachers/${data.teacher.id}/rate`)
+    navigate(`/teachers/${data.teacher.id}/rate`, { replace: true })
   }, [data, isLoading, error, navigate])
 
   return (
