@@ -6,11 +6,12 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Skeleton } from "@/components/ui/skeleton"
-import type { TeacherRanking, TeacherWithAssignments } from "@/api/types"
+import type { Rating, TeacherRanking, TeacherWithAssignments } from "@/api/types"
 
 interface TeacherDetailProps {
   teacher?: TeacherWithAssignments
   ranking?: TeacherRanking
+  ratings?: Rating[]
   isLoading: boolean
   isAuthenticated: boolean
 }
@@ -44,6 +45,7 @@ function ScoreRow({
 export function TeacherDetail({
   teacher,
   ranking,
+  ratings,
   isLoading,
   isAuthenticated,
 }: TeacherDetailProps) {
@@ -139,6 +141,48 @@ export function TeacherDetail({
           </CardContent>
         </Card>
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Мнения</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {!ratings || ratings.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Пока нет комментариев</p>
+          ) : (
+            <div className="space-y-4">
+              {ratings.map((rating) => (
+                <div
+                  key={rating.id}
+                  className="rounded-lg border bg-muted/30 p-4"
+                >
+                  <div className="mb-2 flex items-center gap-2 text-sm">
+                    <span className="font-medium">{rating.person.name}</span>
+                    <span className="text-muted-foreground">·</span>
+                    <span className="text-muted-foreground">
+                      {new Date(rating.created_at).toLocaleDateString("ru-RU", {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      })}
+                    </span>
+                  </div>
+                  {rating.comment && (
+                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                      {rating.comment}
+                    </p>
+                  )}
+                  <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
+                    <span>Вайбовость: {rating.vibe_score}/10</span>
+                    <span>Халявность: {rating.easy_score}/10</span>
+                    <span>Качество: {rating.quality_score}/10</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   )
 }
