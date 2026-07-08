@@ -78,7 +78,7 @@ export function TeacherDetail({
           <p className="mt-1 text-muted-foreground">
             {teacher.assignments.length > 0
               ? "Преподаватель по направлениям"
-              : "Нет назначений"}
+              : "Нет предметов"}
           </p>
         </div>
         {isAuthenticated && (
@@ -117,7 +117,7 @@ export function TeacherDetail({
 
         <Card>
           <CardHeader>
-            <CardTitle>Назначения</CardTitle>
+            <CardTitle>Предметы</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             {Object.entries(assignmentsByCourse).length === 0 ? (
