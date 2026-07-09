@@ -45,7 +45,9 @@ export async function getTeacherRankings(category: RankingCategory) {
 }
 
 export async function getNextUnratedTeacher() {
-  return apiRequest<NextUnratedResponse>(nextUnratedUrl())
+  return apiRequest<NextUnratedResponse>(nextUnratedUrl(), {
+    cache: "no-store",
+  })
 }
 
 export async function skipTeacher(teacherId: number) {
