@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowRight } from "@phosphor-icons/react"
-import { useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -9,9 +8,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ScoreInput } from "./ScoreInput"
-import { skipTeacher } from "@/api/teachers"
+import { getNextUnratedTeacher, skipTeacher } from "@/api/teachers"
 import { useCreateRating } from "@/hooks/useRatings"
-import { teacherKeys } from "@/hooks/useTeachers"
 import type { Rating, Teacher, TeacherAssignment } from "@/api/types"
 
 interface RatingFormProps {
@@ -23,7 +21,6 @@ interface RatingFormProps {
 
 export function RatingForm({ teacher, assignments, isLoadingAssignments, existingRating }: RatingFormProps) {
   const navigate = useNavigate()
-  const queryClient = useQueryClient()
   const createRating = useCreateRating()
   const [vibeScore, setVibeScore] = useState(existingRating?.vibe_score ?? 5)
   const [easyScore, setEasyScore] = useState(existingRating?.easy_score ?? 5)
@@ -40,6 +37,17 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
     })
   }
 
+  /** Fetch next unrated teacher directly (bypasses React Query cache to avoid stale-data races). */
+  async function goToNextTeacher() {
+    const next = await getNextUnratedTeacher()
+    if (next.done || !next.teacher) {
+      toast.success("Вы оценили всех преподавателей")
+      navigate("/teachers", { replace: true })
+    } else {
+      navigate(`/teachers/${next.teacher.id}/rate`, { replace: true })
+    }
+  }
+
   async function handleSave() {
     try {
       await saveRating()
@@ -54,9 +62,8 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
   async function handleSaveAndNext() {
     try {
       await saveRating()
-      queryClient.removeQueries({ queryKey: teacherKeys.nextUnrated() })
       toast.success("Оценка сохранена")
-      navigate("/next", { replace: true })
+      await goToNextTeacher()
     } catch (err) {
       const message = err instanceof Error ? err.message : "Не удалось сохранить оценку"
       toast.error(message)
@@ -66,9 +73,8 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
   async function handleSkip() {
     try {
       await skipTeacher(teacher.id)
-      queryClient.removeQueries({ queryKey: teacherKeys.nextUnrated() })
       toast.success("Пропущено")
-      navigate("/next", { replace: true })
+      await goToNextTeacher()
     } catch (err) {
       const message = err instanceof Error ? err.message : "Не удалось пропустить"
       toast.error(message)
