@@ -26,6 +26,7 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
   const [easyScore, setEasyScore] = useState(existingRating?.easy_score ?? 5)
   const [qualityScore, setQualityScore] = useState(existingRating?.quality_score ?? 5)
   const [comment, setComment] = useState(existingRating?.comment ?? "")
+  const [isAnonymous, setIsAnonymous] = useState(existingRating?.is_anonymous ?? false)
 
   async function saveRating() {
     await createRating.mutateAsync({
@@ -34,6 +35,7 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
       easy_score: easyScore,
       quality_score: qualityScore,
       comment,
+      is_anonymous: isAnonymous,
     })
   }
 
@@ -148,6 +150,16 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
           rows={4}
         />
       </div>
+
+      <label className="flex items-center gap-2.5 cursor-pointer select-none">
+        <input
+          type="checkbox"
+          checked={isAnonymous}
+          onChange={(e) => setIsAnonymous(e.target.checked)}
+          className="h-4 w-4 rounded border-input accent-primary cursor-pointer"
+        />
+        <span className="text-sm text-muted-foreground">Оставить анонимно</span>
+      </label>
 
       <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
         <Button

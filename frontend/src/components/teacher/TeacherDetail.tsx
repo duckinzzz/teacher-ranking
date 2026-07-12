@@ -187,14 +187,16 @@ export function TeacherDetail({
           ) : (
             <div className="space-y-4">
               {ratings.map((rating) => {
-                const isOwn = currentPersonId != null && rating.person.id === currentPersonId
+                const isOwn = currentPersonId != null && rating.person?.id === currentPersonId
                 return (
                   <div
                     key={rating.id}
                     className="rounded-lg border bg-muted/30 p-4"
                   >
                     <div className="mb-2 flex items-center gap-2 text-sm">
-                      <span className="font-medium">{rating.person.name}</span>
+                      <span className={cn("font-medium", rating.is_anonymous && "text-muted-foreground italic")}>
+                        {rating.person?.name ?? "Анонимно"}
+                      </span>
                       <span className="text-muted-foreground">·</span>
                       <span className="text-muted-foreground">
                         {new Date(rating.created_at).toLocaleDateString("ru-RU", {

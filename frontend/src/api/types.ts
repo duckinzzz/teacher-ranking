@@ -32,12 +32,13 @@ export interface TeacherWithAssignments extends Teacher {
 
 export interface Rating {
   id: number
-  person: Person
+  person: Person | null
   teacher: Teacher
   vibe_score: number
   easy_score: number
   quality_score: number
   comment: string
+  is_anonymous: boolean
   created_at: string
   updated_at: string
   like_count: number
@@ -77,6 +78,7 @@ export interface RatingPayload {
   easy_score: number
   quality_score: number
   comment?: string
+  is_anonymous?: boolean
 }
 
 export type RankingCategory = "vibe" | "easy" | "quality"
