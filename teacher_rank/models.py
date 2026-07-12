@@ -142,3 +142,34 @@ class Rating(models.Model):
 
     def __str__(self):
         return f"{self.person} → {self.teacher}"
+
+
+class RatingLike(models.Model):
+    """Лайк / дизлайк мнения (оценки) от пользователя."""
+
+    class Value(models.IntegerChoices):
+        LIKE = 1, "👍"
+        DISLIKE = -1, "👎"
+
+    person = models.ForeignKey(
+        Person, on_delete=models.CASCADE,
+        verbose_name="Пользователь",
+        related_name="rating_likes",
+    )
+    rating = models.ForeignKey(
+        Rating, on_delete=models.CASCADE,
+        verbose_name="Оценка",
+        related_name="likes",
+    )
+    value = models.SmallIntegerField("Реакция", choices=Value.choices)
+    created_at = models.DateTimeField("Поставлена", auto_now_add=True)
+
+    class Meta:
+        verbose_name = "Лайк/дизлайк"
+        verbose_name_plural = "Лайки/дизлайки"
+        unique_together = [("person", "rating")]
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        label = "👍" if self.value == self.Value.LIKE else "👎"
+        return f"{self.person} {label} мнение {self.rating_id}"

@@ -32,3 +32,7 @@ export function nextUnratedUrl() {
 export function skipTeacherUrl(teacherId: number) {
   return `${endpoints.teachers}/${teacherId}/skip/`
 }
+
+export function ratingReactUrl(ratingId: number) {
+  return `${endpoints.ratings}${ratingId}/react/`
+}

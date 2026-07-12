@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createRating, listRatings } from "@/api/ratings"
+import { createRating, listRatings, reactToRating } from "@/api/ratings"
 import { teacherKeys } from "./useTeachers"
 
 export const ratingKeys = {
@@ -8,10 +8,10 @@ export const ratingKeys = {
   forPerson: (id: number) => [...ratingKeys.all, "person", id] as const,
 }
 
-export function useTeacherRatings(teacherId: number) {
+export function useTeacherRatings(teacherId: number, ordering?: string) {
   return useQuery({
-    queryKey: ratingKeys.forTeacher(teacherId),
-    queryFn: () => listRatings({ teacher: teacherId }),
+    queryKey: [...ratingKeys.forTeacher(teacherId), ordering ?? "date"],
+    queryFn: () => listRatings({ teacher: teacherId, ordering }),
     enabled: Number.isFinite(teacherId),
   })
 }
@@ -47,6 +47,18 @@ export function useCreateRating() {
       queryClient.invalidateQueries({
         queryKey: teacherKeys.nextUnrated(),
       })
+    },
+  })
+}
+
+export function useRatingReaction() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ ratingId, value }: { ratingId: number; value: 1 | -1 }) =>
+      reactToRating(ratingId, value),
+    onSuccess: () => {
+      // Invalidate all ratings queries to refresh like counts
+      queryClient.invalidateQueries({ queryKey: ratingKeys.all })
     },
   })
 }
