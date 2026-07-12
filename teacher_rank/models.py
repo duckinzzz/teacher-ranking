@@ -131,6 +131,7 @@ class Rating(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(10)],
     )
     comment = models.TextField("Комментарий", blank=True, default="")
+    is_anonymous = models.BooleanField("Анонимно", default=False)
     created_at = models.DateTimeField("Дата оценки", auto_now_add=True)
     updated_at = models.DateTimeField("Изменено", auto_now=True)
 

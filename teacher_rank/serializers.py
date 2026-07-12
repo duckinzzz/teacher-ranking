@@ -76,6 +76,7 @@ class RatingSerializer(serializers.ModelSerializer):
             "easy_score",
             "quality_score",
             "comment",
+            "is_anonymous",
             "created_at",
             "updated_at",
             "like_count",
@@ -113,6 +114,12 @@ class RatingSerializer(serializers.ModelSerializer):
             if rl.person_id == person.pk:
                 return rl.value
         return None
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if instance.is_anonymous:
+            data["person"] = None
+        return data
 
     def create(self, validated_data):
         person = validated_data.pop("person")
