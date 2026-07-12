@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Course, Person, Rating, Subject, Teacher, TeacherAssignment
+from .models import Course, Person, Rating, RatingLike, Subject, Teacher, TeacherAssignment
 
 
 class TeacherSerializer(serializers.ModelSerializer):
@@ -61,6 +61,9 @@ class RatingSerializer(serializers.ModelSerializer):
     teacher_id = serializers.PrimaryKeyRelatedField(
         queryset=Teacher.objects.all(), source="teacher", write_only=True
     )
+    like_count = serializers.SerializerMethodField()
+    dislike_count = serializers.SerializerMethodField()
+    user_reaction = serializers.SerializerMethodField()
 
     class Meta:
         model = Rating
@@ -75,9 +78,41 @@ class RatingSerializer(serializers.ModelSerializer):
             "comment",
             "created_at",
             "updated_at",
+            "like_count",
+            "dislike_count",
+            "user_reaction",
         ]
         read_only_fields = ["created_at", "updated_at"]
         validators = []
+
+    def _get_reaction_counts(self, obj):
+        """Compute like/dislike counts from the prefetched likes relation."""
+        likes = 0
+        dislikes = 0
+        for rl in obj.likes.all():
+            if rl.value == RatingLike.Value.LIKE:
+                likes += 1
+            elif rl.value == RatingLike.Value.DISLIKE:
+                dislikes += 1
+        return likes, dislikes
+
+    def get_like_count(self, obj) -> int:
+        likes, _ = self._get_reaction_counts(obj)
+        return likes
+
+    def get_dislike_count(self, obj) -> int:
+        _, dislikes = self._get_reaction_counts(obj)
+        return dislikes
+
+    def get_user_reaction(self, obj) -> int | None:
+        request = self.context.get("request")
+        if not request or not request.user.is_authenticated:
+            return None
+        person = request.user
+        for rl in obj.likes.all():
+            if rl.person_id == person.pk:
+                return rl.value
+        return None
 
     def create(self, validated_data):
         person = validated_data.pop("person")

@@ -1,10 +1,11 @@
-from django.db.models import Avg, Count
+from django.db import models
+from django.db.models import Avg, Count, Prefetch
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from .authentication import SESSION_PERSON_KEY
-from .models import Course, Person, Rating, SkippedTeacher, Subject, Teacher, TeacherAssignment
+from .models import Course, Person, Rating, RatingLike, SkippedTeacher, Subject, Teacher, TeacherAssignment
 from .serializers import (
     CourseSerializer,
     PersonSerializer,
@@ -211,7 +212,62 @@ class RatingViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(person_id=person_id)
         if teacher_id:
             queryset = queryset.filter(teacher_id=teacher_id)
+
+        queryset = queryset.prefetch_related(
+            Prefetch("likes", queryset=RatingLike.objects.select_related("person"))
+        )
+
+        ordering = self.request.query_params.get("ordering")
+        if ordering == "like_count":
+            queryset = queryset.annotate(
+                _like_count=Count("likes", filter=models.Q(likes__value=RatingLike.Value.LIKE))
+            ).order_by("-_like_count", "-created_at")
+        elif ordering == "-like_count":
+            queryset = queryset.annotate(
+                _like_count=Count("likes", filter=models.Q(likes__value=RatingLike.Value.LIKE))
+            ).order_by("_like_count", "-created_at")
+        else:
+            queryset = queryset.order_by("-created_at")
+
         return queryset
 
     def perform_create(self, serializer):
         serializer.save(person=self.request.user)
+
+    @action(
+        detail=True,
+        methods=["post"],
+        permission_classes=[permissions.IsAuthenticated],
+    )
+    def react(self, request, pk=None):
+        rating = self.get_object()
+        person = request.user
+
+        if rating.person_id == person.pk:
+            return Response(
+                {"detail": "Нельзя реагировать на собственное мнение"},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        value = request.data.get("value")
+        if value not in (RatingLike.Value.LIKE, RatingLike.Value.DISLIKE):
+            return Response(
+                {"detail": "Укажите value: 1 (лайк) или -1 (дизлайк)"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        existing = RatingLike.objects.filter(person=person, rating=rating).first()
+
+        if existing:
+            if existing.value == value:
+                # Toggle off — same reaction clicked again
+                existing.delete()
+                return Response({"reaction": None})
+            else:
+                # Switch reaction
+                existing.value = value
+                existing.save(update_fields=["value"])
+                return Response({"reaction": value})
+        else:
+            RatingLike.objects.create(person=person, rating=rating, value=value)
+            return Response({"reaction": value}, status=status.HTTP_201_CREATED)

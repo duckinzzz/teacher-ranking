@@ -40,6 +40,9 @@ export interface Rating {
   comment: string
   created_at: string
   updated_at: string
+  like_count: number
+  dislike_count: number
+  user_reaction: 1 | -1 | null
 }
 
 export interface TeacherRanking {

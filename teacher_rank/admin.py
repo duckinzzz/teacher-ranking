@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Teacher, Subject, Course, TeacherAssignment, Person, Rating
+from .models import Teacher, Subject, Course, TeacherAssignment, Person, Rating, RatingLike
 
 
 @admin.register(Teacher)
@@ -37,3 +37,9 @@ class PersonAdmin(admin.ModelAdmin):
 class RatingAdmin(admin.ModelAdmin):
     list_display = ("person", "teacher", "vibe_score", "easy_score", "quality_score", "created_at")
     list_filter = ("person", "teacher")
+
+
+@admin.register(RatingLike)
+class RatingLikeAdmin(admin.ModelAdmin):
+    list_display = ("person", "rating", "value", "created_at")
+    list_filter = ("value", "person")

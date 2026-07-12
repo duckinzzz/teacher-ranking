@@ -1,5 +1,5 @@
 import { apiRequest } from "./client"
-import { endpoints } from "./endpoints"
+import { endpoints, ratingReactUrl } from "./endpoints"
 import type { Rating, RatingPayload } from "./types"
 
 export async function createRating(payload: RatingPayload) {
@@ -12,6 +12,14 @@ export async function createRating(payload: RatingPayload) {
 export async function listRatings(params?: {
   person?: number
   teacher?: number
+  ordering?: string
 }) {
   return apiRequest<Rating[]>(endpoints.ratings, { params })
+}
+
+export async function reactToRating(ratingId: number, value: 1 | -1) {
+  return apiRequest<{ reaction: number | null }>(ratingReactUrl(ratingId), {
+    method: "POST",
+    body: JSON.stringify({ value }),
+  })
 }
