@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { PencilSimple, Star, ThumbsUp, ThumbsDown, Clock } from "@phosphor-icons/react"
+import { PencilSimple, Star, ThumbsUp, ThumbsDown, Clock, Trash } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -20,6 +20,7 @@ interface TeacherDetailProps {
   sortMode: SortMode
   onSortChange: (mode: SortMode) => void
   onReact: (ratingId: number, value: 1 | -1) => void
+  onDelete: (ratingId: number) => void
 }
 
 function ScoreRow({
@@ -58,6 +59,7 @@ export function TeacherDetail({
   sortMode,
   onSortChange,
   onReact,
+  onDelete,
 }: TeacherDetailProps) {
   if (isLoading || !teacher) {
     return (
@@ -257,6 +259,17 @@ export function TeacherDetail({
                         />
                         <span>{rating.dislike_count}</span>
                       </button>
+                      {isOwn && (
+                        <button
+                          type="button"
+                          onClick={() => onDelete(rating.id)}
+                          className="ml-auto inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-destructive"
+                          title="Удалить оценку"
+                        >
+                          <Trash className="h-4 w-4" />
+                          <span>Удалить</span>
+                        </button>
+                      )}
                     </div>
                   </div>
                 )

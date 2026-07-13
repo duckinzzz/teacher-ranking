@@ -23,3 +23,9 @@ export async function reactToRating(ratingId: number, value: 1 | -1) {
     body: JSON.stringify({ value }),
   })
 }
+
+export async function deleteRating(ratingId: number) {
+  return apiRequest<void>(`${endpoints.ratings}${ratingId}/`, {
+    method: "DELETE",
+  })
+}
