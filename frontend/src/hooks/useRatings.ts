@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { createRating, listRatings, reactToRating } from "@/api/ratings"
+import { createRating, deleteRating, listRatings, reactToRating } from "@/api/ratings"
 import { teacherKeys } from "./useTeachers"
 
 export const ratingKeys = {
@@ -56,8 +56,19 @@ export function useRatingReaction() {
     mutationFn: ({ ratingId, value }: { ratingId: number; value: 1 | -1 }) =>
       reactToRating(ratingId, value),
     onSuccess: () => {
-      // Invalidate all ratings queries to refresh like counts
       queryClient.invalidateQueries({ queryKey: ratingKeys.all })
+    },
+  })
+}
+
+export function useDeleteRating() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: deleteRating,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ratingKeys.all })
+      // Also invalidate rankings since average scores changed
+      queryClient.invalidateQueries({ queryKey: teacherKeys.all })
     },
   })
 }

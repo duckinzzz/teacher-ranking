@@ -7,7 +7,7 @@ import {
   useTeacherAssignments,
   useTeacherRanking,
 } from "@/hooks/useTeachers"
-import { useTeacherRatings, useRatingReaction } from "@/hooks/useRatings"
+import { useTeacherRatings, useRatingReaction, useDeleteRating } from "@/hooks/useRatings"
 import { toast } from "sonner"
 
 export function TeacherPage() {
@@ -27,6 +27,7 @@ export function TeacherPage() {
     useTeacherRatings(teacherId, ordering)
 
   const reactMutation = useRatingReaction()
+  const deleteMutation = useDeleteRating()
 
   const handleReact = (ratingId: number, value: 1 | -1) => {
     reactMutation.mutate(
@@ -37,6 +38,17 @@ export function TeacherPage() {
         },
       }
     )
+  }
+
+  const handleDelete = (ratingId: number) => {
+    deleteMutation.mutate(ratingId, {
+      onSuccess: () => {
+        toast.success("Оценка удалена")
+      },
+      onError: (error) => {
+        toast.error(error instanceof Error ? error.message : "Не удалось удалить оценку")
+      },
+    })
   }
 
   const teacherWithAssignments = teacher
@@ -56,6 +68,7 @@ export function TeacherPage() {
       sortMode={sortMode}
       onSortChange={setSortMode}
       onReact={handleReact}
+      onDelete={handleDelete}
     />
   )
 }
