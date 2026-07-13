@@ -27,11 +27,11 @@ function RatingBadge({ rating }: { rating?: Rating }) {
   return (
     <div className="flex items-center gap-1 shrink-0 text-muted-foreground">
       <Sparkle className="h-3.5 w-3.5" />
-      <span className="text-xs font-mono font-medium">{rating.vibe_score}</span>
+      <span className="text-xs font-mono font-medium">{rating.vibe_score != null ? rating.vibe_score : "—"}</span>
       <Coffee className="h-3.5 w-3.5" />
-      <span className="text-xs font-mono font-medium">{rating.easy_score}</span>
+      <span className="text-xs font-mono font-medium">{rating.easy_score != null ? rating.easy_score : "—"}</span>
       <GraduationCap className="h-3.5 w-3.5" />
-      <span className="text-xs font-mono font-medium">{rating.quality_score}</span>
+      <span className="text-xs font-mono font-medium">{rating.quality_score != null ? rating.quality_score : "—"}</span>
     </div>
   )
 }

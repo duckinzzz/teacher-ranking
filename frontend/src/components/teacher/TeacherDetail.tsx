@@ -214,9 +214,9 @@ export function TeacherDetail({
                       </p>
                     )}
                     <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted-foreground">
-                      <span>Вайбовость: {rating.vibe_score}/10</span>
-                      <span>Халявность: {rating.easy_score}/10</span>
-                      <span>Качество: {rating.quality_score}/10</span>
+                      <span>Вайбовость: {rating.vibe_score != null ? `${rating.vibe_score}/10` : "—"}</span>
+                      <span>Халявность: {rating.easy_score != null ? `${rating.easy_score}/10` : "—"}</span>
+                      <span>Качество: {rating.quality_score != null ? `${rating.quality_score}/10` : "—"}</span>
                     </div>
                     <div className="mt-3 flex items-center gap-3">
                       <button
