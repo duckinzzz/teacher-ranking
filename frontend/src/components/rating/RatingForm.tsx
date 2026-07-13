@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowRight } from "@phosphor-icons/react"
 import { toast } from "sonner"
@@ -27,6 +27,17 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
   const [qualityScore, setQualityScore] = useState(existingRating?.quality_score ?? 5)
   const [comment, setComment] = useState(existingRating?.comment ?? "")
   const [isAnonymous, setIsAnonymous] = useState(existingRating?.is_anonymous ?? false)
+
+  // Sync form state when existing rating loads asynchronously
+  useEffect(() => {
+    if (existingRating) {
+      setVibeScore(existingRating.vibe_score)
+      setEasyScore(existingRating.easy_score)
+      setQualityScore(existingRating.quality_score)
+      setComment(existingRating.comment ?? "")
+      setIsAnonymous(existingRating.is_anonymous ?? false)
+    }
+  }, [existingRating?.id])
 
   async function saveRating() {
     await createRating.mutateAsync({
