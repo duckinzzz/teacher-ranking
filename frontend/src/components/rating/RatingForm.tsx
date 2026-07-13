@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowRight } from "@phosphor-icons/react"
+import { ArrowLeft, ArrowRight } from "@phosphor-icons/react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -39,6 +39,17 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
     }
   }, [existingRating?.id])
 
+  const prevTeacherId = sessionStorage.getItem("prevTeacherId")
+  const prevTeacherName = sessionStorage.getItem("prevTeacherName")
+
+  const handleBackToPrevious = useCallback(() => {
+    sessionStorage.removeItem("prevTeacherId")
+    sessionStorage.removeItem("prevTeacherName")
+    if (prevTeacherId) {
+      navigate(`/teachers/${prevTeacherId}/rate`, { replace: true })
+    }
+  }, [prevTeacherId, navigate])
+
   async function saveRating() {
     await createRating.mutateAsync({
       teacher_id: teacher.id,
@@ -55,8 +66,12 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
     const next = await getNextUnratedTeacher()
     if (next.done || !next.teacher) {
       toast.success("Вы оценили всех преподавателей")
+      sessionStorage.removeItem("prevTeacherId")
+      sessionStorage.removeItem("prevTeacherName")
       navigate("/teachers", { replace: true })
     } else {
+      sessionStorage.setItem("prevTeacherId", String(teacher.id))
+      sessionStorage.setItem("prevTeacherName", teacher.full_name)
       navigate(`/teachers/${next.teacher.id}/rate`, { replace: true })
     }
   }
@@ -172,7 +187,18 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
         <span className="text-sm text-muted-foreground">Оставить анонимно</span>
       </label>
 
-      <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+      <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:flex-wrap">
+        {prevTeacherId && prevTeacherName && (
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleBackToPrevious}
+            disabled={createRating.isPending}
+          >
+            <ArrowLeft className="mr-1.5 h-4 w-4" />
+            К {prevTeacherName}
+          </Button>
+        )}
         <Button
           type="button"
           onClick={handleSaveAndNext}
@@ -196,6 +222,8 @@ export function RatingForm({ teacher, assignments, isLoadingAssignments, existin
           type="button"
           variant="ghost"
           onClick={() => {
+            sessionStorage.removeItem("prevTeacherId")
+            sessionStorage.removeItem("prevTeacherName")
             if (window.history.length > 1) {
               navigate(-1)
             } else {
