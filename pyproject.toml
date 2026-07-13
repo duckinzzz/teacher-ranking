@@ -10,4 +10,6 @@ dependencies = [
     "gunicorn>=23.0.0",
     "psycopg2-binary>=2.9.10",
     "django-cors-headers>=4.4.0",
+    "djangorestframework-stubs>=3.17.0",
+    "watchdog>=6.0.0",
 ]

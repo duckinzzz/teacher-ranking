@@ -15,7 +15,12 @@ services:
     ports:
       - "8000:8000"
     entrypoint: []
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      watchmedo auto-restart
+      --directory=./teacher_rank
+      --pattern="*.py"
+      --recursive
+      -- python manage.py runserver 0.0.0.0:8000
 
   frontend:
     build:
