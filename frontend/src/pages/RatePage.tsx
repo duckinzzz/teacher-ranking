@@ -32,7 +32,13 @@ export function RatePage() {
                     {teacher.full_name}
                 </h1>
             </div>
-            <RatingForm teacher={teacher} assignments={assignments} isLoadingAssignments={assignmentsLoading} existingRating={existingRating}/>
+            <RatingForm
+              key={existingRating ? `edit-${existingRating.id}` : `new-${teacherId}`}
+              teacher={teacher}
+              assignments={assignments}
+              isLoadingAssignments={assignmentsLoading}
+              existingRating={existingRating}
+            />
         </div>
     )
 }

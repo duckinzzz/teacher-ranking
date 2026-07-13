@@ -29,9 +29,8 @@ export function useCreateRating() {
   return useMutation({
     mutationFn: createRating,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: ratingKeys.forTeacher(data.teacher.id),
-      })
+      // Invalidate all rating caches — forTeacher and forPerson both need refresh
+      queryClient.invalidateQueries({ queryKey: ratingKeys.all })
       queryClient.invalidateQueries({
         queryKey: teacherKeys.ranking(data.teacher.id),
       })
