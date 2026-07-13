@@ -34,9 +34,9 @@ export interface Rating {
   id: number
   person: Person | null
   teacher: Teacher
-  vibe_score: number
-  easy_score: number
-  quality_score: number
+  vibe_score: number | null
+  easy_score: number | null
+  quality_score: number | null
   comment: string
   is_anonymous: boolean
   created_at: string
@@ -74,9 +74,9 @@ export interface LoginPayload {
 
 export interface RatingPayload {
   teacher_id: number
-  vibe_score: number
-  easy_score: number
-  quality_score: number
+  vibe_score: number | null
+  easy_score: number | null
+  quality_score: number | null
   comment?: string
   is_anonymous?: boolean
 }

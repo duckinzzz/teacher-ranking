@@ -1,10 +1,11 @@
 import { cn } from "@/lib/utils"
+import { Prohibit } from "@phosphor-icons/react"
 
 interface ScoreInputProps {
   label: string
   description?: string
-  value: number
-  onChange: (value: number) => void
+  value: number | null
+  onChange: (value: number | null) => void
 }
 
 export function ScoreInput({ label, description, value, onChange }: ScoreInputProps) {
@@ -16,7 +17,7 @@ export function ScoreInput({ label, description, value, onChange }: ScoreInputPr
           <p className="text-xs text-muted-foreground">{description}</p>
         )}
       </div>
-      <div className="flex gap-1">
+      <div className="flex gap-1 flex-wrap">
         {Array.from({ length: 11 }, (_, i) => i).map((score) => (
           <button
             key={score}
@@ -37,6 +38,19 @@ export function ScoreInput({ label, description, value, onChange }: ScoreInputPr
             {score}
           </button>
         ))}
+        <button
+          type="button"
+          onClick={() => onChange(null)}
+          className={cn(
+            "h-7 sm:h-9 rounded-md px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            value === null
+              ? "bg-muted-foreground text-background"
+              : "border bg-background text-muted-foreground hover:bg-accent hover:text-foreground"
+          )}
+          title="Не оценивать этот критерий"
+        >
+          <Prohibit className="h-3.5 w-3.5" />
+        </button>
       </div>
     </div>
   )

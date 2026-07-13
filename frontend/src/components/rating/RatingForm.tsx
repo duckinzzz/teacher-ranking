@@ -22,18 +22,18 @@ interface RatingFormProps {
 export function RatingForm({ teacher, assignments, isLoadingAssignments, existingRating }: RatingFormProps) {
   const navigate = useNavigate()
   const createRating = useCreateRating()
-  const [vibeScore, setVibeScore] = useState(existingRating?.vibe_score ?? 5)
-  const [easyScore, setEasyScore] = useState(existingRating?.easy_score ?? 5)
-  const [qualityScore, setQualityScore] = useState(existingRating?.quality_score ?? 5)
+  const [vibeScore, setVibeScore] = useState<number | null>(existingRating?.vibe_score ?? null)
+  const [easyScore, setEasyScore] = useState<number | null>(existingRating?.easy_score ?? null)
+  const [qualityScore, setQualityScore] = useState<number | null>(existingRating?.quality_score ?? null)
   const [comment, setComment] = useState(existingRating?.comment ?? "")
   const [isAnonymous, setIsAnonymous] = useState(existingRating?.is_anonymous ?? false)
 
   // Sync form state when existing rating loads asynchronously
   useEffect(() => {
     if (existingRating) {
-      setVibeScore(existingRating.vibe_score)
-      setEasyScore(existingRating.easy_score)
-      setQualityScore(existingRating.quality_score)
+      setVibeScore(existingRating.vibe_score ?? null)
+      setEasyScore(existingRating.easy_score ?? null)
+      setQualityScore(existingRating.quality_score ?? null)
       setComment(existingRating.comment ?? "")
       setIsAnonymous(existingRating.is_anonymous ?? false)
     }

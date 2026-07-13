@@ -121,14 +121,17 @@ class Rating(models.Model):
     vibe_score = models.PositiveSmallIntegerField(
         "Вайбовость",
         validators=[MinValueValidator(0), MaxValueValidator(10)],
+        null=True, blank=True,
     )
     easy_score = models.PositiveSmallIntegerField(
         "Халявность",
         validators=[MinValueValidator(0), MaxValueValidator(10)],
+        null=True, blank=True,
     )
     quality_score = models.PositiveSmallIntegerField(
         "Качество обучения",
         validators=[MinValueValidator(0), MaxValueValidator(10)],
+        null=True, blank=True,
     )
     comment = models.TextField("Комментарий", blank=True, default="")
     is_anonymous = models.BooleanField("Анонимно", default=False)
