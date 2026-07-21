@@ -58,9 +58,7 @@ export function Header() {
     <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-6">
         <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-          <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-            <ChartBar weight="bold" className="h-4 w-4" />
-          </span>
+          <img src="/favicon.svg" alt="RateProf" className="h-12 w-12" />
           RateProf
         </Link>
 
