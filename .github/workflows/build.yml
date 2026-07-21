@@ -80,7 +80,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
     environment:
       name: production
-      url: https://aboba.shapuel.ru
+      url: https://rate.shapuel.ru
     steps:
       - name: Pull and restart containers
         uses: appleboy/ssh-action@v1
@@ -125,7 +125,7 @@ jobs:
       - name: Smoke test public URL
         run: |
           for i in $(seq 1 10); do
-            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://aboba.shapuel.ru/api/schema/ || echo "000")
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://rate.shapuel.ru/api/schema/ || echo "000")
             if [ "$STATUS" = "200" ]; then
               echo "Public URL OK — HTTP $STATUS"
               exit 0

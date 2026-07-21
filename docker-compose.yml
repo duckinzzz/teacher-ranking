@@ -71,7 +71,7 @@ services:
       - caddy-proxy
       - default
     labels:
-      caddy: aboba.shapuel.ru
+      caddy: rate.shapuel.ru
       caddy.reverse_proxy: "{{upstreams 80}}"
 
     depends_on:
