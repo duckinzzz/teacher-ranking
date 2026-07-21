@@ -82,14 +82,56 @@ jobs:
       name: production
       url: https://aboba.shapuel.ru
     steps:
-      - name: Deploy via SSH
+      - name: Pull and restart containers
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
+            set -e
             cd /srv/teacher-ranking
             docker compose pull
             docker compose up -d --remove-orphans
             docker image prune -f
+
+      - name: Wait for containers to be healthy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            set -e
+            cd /srv/teacher-ranking
+
+            echo "Waiting for web container to become healthy..."
+            for i in $(seq 1 30); do
+              STATUS=$(docker compose ps --format json web 2>/dev/null | grep -o '"Health"[[:space:]]*:[[:space:]]*"[^"]*"' | cut -d'"' -f4)
+              if [ "$STATUS" = "healthy" ]; then
+                echo "Container is healthy"
+                break
+              fi
+              echo "  attempt $i/30 — status: ${STATUS:-starting} — waiting..."
+              sleep 2
+            done
+
+            if [ "$STATUS" != "healthy" ]; then
+              echo "Health check failed after 60s!"
+              docker compose logs --tail=50 web
+              exit 1
+            fi
+
+      - name: Smoke test public URL
+        run: |
+          for i in $(seq 1 10); do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://aboba.shapuel.ru/api/schema/ || echo "000")
+            if [ "$STATUS" = "200" ]; then
+              echo "Public URL OK — HTTP $STATUS"
+              exit 0
+            fi
+            echo "  attempt $i/10 — HTTP $STATUS — retrying..."
+            sleep 3
+          done
+          echo "Public URL still not responding!"
+          exit 1
